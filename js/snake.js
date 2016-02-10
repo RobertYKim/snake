@@ -11,6 +11,10 @@ Coordinate.prototype.plus = function (coordinate) {
   return new Coordinate(this.a + coordinate.a, this.b + coordinate.b);
 };
 
+Coordinate.prototype.equals = function (coordinate) {
+  return (this.a === coordinate.a) && (this.b === coordinate.b);
+};
+
 var Apple = function (board) {
   this.board = board;
   this.replace();
@@ -38,6 +42,8 @@ var Snake = function (board) {
   var center =
     new Coordinate(Math.floor(board.size/2), Math.floor(board.size/2));
   this.segments = [center];
+
+  this.growTurns = 0;
 };
 
 Snake.DIFFERENCE = {
@@ -48,6 +54,16 @@ Snake.DIFFERENCE = {
 };
 
 Snake.SYMBOL = "S";
+Snake.GROW_TURNS = 3;
+
+Snake.prototype.eatApple = function () {
+  if (this.head().equals(this.board.apple.position)) {
+    this.growTurns += 3;
+    return true;
+  } else {
+    return false;
+  }
+};
 
 Snake.prototype.isOccupying = function (array) {
   var result = false;
@@ -74,8 +90,17 @@ Snake.prototype.move = function () {
   // Allow snake to turn again
   this.turning = false;
 
-  // Remove a segment from the end of the snake
-  this.segments.shift();
+  // Check for contact with apple
+  if (this.eatApple()) {
+    this.board.apple.replace();
+  }
+
+  // Remove tail segment if not growing
+  if (this.growTurns > 0) {
+    this.growTurns -= 1;
+  } else {
+    this.segments.shift();
+  }
 };
 
 Snake.prototype.turn = function (direction) {
