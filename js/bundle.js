@@ -66,12 +66,15 @@
 	  this.board = new Board(20);
 	  this.setupGrid();
 	
+	  this.paused = false;
 	  this.interval = window.setInterval(this.step.bind(this), 100);
+	  this.pause();
 	
 	  $(window).on("keydown", this.handleKeyEvent.bind(this));
 	};
 	
 	View.KEYS = {
+	  32: "P",
 	  38: "N",
 	  39: "E",
 	  40: "S",
@@ -79,9 +82,22 @@
 	};
 	
 	View.prototype.handleKeyEvent = function (event) {
-	  var direction = View.KEYS[event.keyCode];
-	  if (direction) {
-	    this.board.snake.turn(direction);
+	  var input = View.KEYS[event.keyCode];
+	  if (input !== "P") {
+	    this.board.snake.turn(input);
+	  } else if (input === "P") {
+	    this.pause();
+	  }
+	};
+	
+	View.prototype.pause = function () {
+	  // Toggle pause state
+	  this.paused = (this.paused ? false : true);
+	
+	  if (this.paused) {
+	    window.clearInterval(this.interval);
+	  } else {
+	    this.interval = window.setInterval(this.step.bind(this), 100);
 	  }
 	};
 	
