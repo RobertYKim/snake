@@ -48,3 +48,16 @@ li {
 .snake {
   background: green;
 }
+
+.paused {
+  display: none;
+  position: absolute;
+  width: 130px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 0);
+}
+
+.show {
+  display: block;;
+}

@@ -91,6 +91,8 @@
 	};
 	
 	View.prototype.pause = function () {
+	  $(".paused").toggleClass("show");
+	
 	  // Toggle pause state
 	  this.paused = (this.paused ? false : true);
 	
