@@ -11,6 +11,25 @@ Coordinate.prototype.plus = function (coordinate) {
   return new Coordinate(this.a + coordinate.a, this.b + coordinate.b);
 };
 
+var Apple = function (board) {
+  this.board = board;
+  this.replace();
+};
+
+Apple.SYMBOL = "A";
+
+Apple.prototype.replace = function () {
+  var x = Math.floor(Math.random() * this.board.size);
+  var y = Math.floor(Math.random() * this.board.size);
+
+  while (this.board.snake.isOccupying([x, y])) {
+    x = Math.floor(Math.random() * this.board.size);
+    y = Math.floor(Math.random() * this.board.size);
+  }
+
+  this.position = new Coordinate(x, y);
+};
+
 var Snake = function (board) {
   this.direction = "N";
   this.turning = false;
@@ -29,6 +48,17 @@ Snake.DIFFERENCE = {
 };
 
 Snake.SYMBOL = "S";
+
+Snake.prototype.isOccupying = function (array) {
+  var result = false;
+  this.segments.forEach( function (segment) {
+    if (segment.a === array[0] && segment.b === array[1]) {
+      result = true;
+      return result;
+    }
+  });
+  return result;
+};
 
 Snake.prototype.head = function () {
   var last = this.segments.length - 1;
@@ -64,6 +94,7 @@ var Board = function (size) {
   this.size = size;
 
   this.snake = new Snake(this);
+  this.apple = new Apple(this);
 };
 
 Board.BLANK_SYMBOL = ".";
@@ -88,6 +119,8 @@ Board.prototype.render = function () {
   this.snake.segments.forEach( function (segment) {
     grid[segment.a][segment.b] = Snake.SYMBOL;
   });
+
+  grid[this.apple.position.a][this.apple.position.b] = Apple.SYMBOL;
 
   var rowStrs = [];
   grid.map( function (row) {
