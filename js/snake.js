@@ -44,6 +44,7 @@ var Snake = function (board) {
   this.segments = [center];
 
   this.growTurns = 0;
+  this.score = 0;
 };
 
 Snake.DIFFERENCE = {

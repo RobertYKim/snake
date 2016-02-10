@@ -1,7 +1,8 @@
 var Board = require('./snake.js');
 
-var View = function ($el) {
+var View = function ($el, $rootEl) {
   this.$el = $el;
+  this.$rootEl = $rootEl;
 
   this.board = new Board(20);
   this.setupGrid();
@@ -39,6 +40,10 @@ View.prototype.updateClasses = function (coordinates, className) {
   }.bind(this));
 };
 
+View.prototype.updateScore = function (score) {
+  $('.score').html( "Score: " + this.board.snake.score);
+};
+
 View.prototype.setupGrid = function () {
   var html = "";
 
@@ -58,6 +63,7 @@ View.prototype.step = function () {
   if (this.board.snake.segments.length > 0) {
     this.board.snake.move();
     this.render();
+    this.updateScore(this.board.snake.score);
   } else {
     alert("You lose!");
     window.clearInterval(this.interval);

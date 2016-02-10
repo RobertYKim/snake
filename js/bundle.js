@@ -47,8 +47,9 @@
 	var SnakeView = __webpack_require__(1);
 	
 	$(function () {
-	  var rootEl = $('.snake-game');
-	  new SnakeView(rootEl);
+	  var el = $('.snake-game');
+	  var rootEl = $('.root');
+	  new SnakeView(el, rootEl);
 	});
 
 
@@ -58,8 +59,9 @@
 
 	var Board = __webpack_require__(2);
 	
-	var View = function ($el) {
+	var View = function ($el, $rootEl) {
 	  this.$el = $el;
+	  this.$rootEl = $rootEl;
 	
 	  this.board = new Board(20);
 	  this.setupGrid();
@@ -97,6 +99,10 @@
 	  }.bind(this));
 	};
 	
+	View.prototype.updateScore = function (score) {
+	  $('.score').html( "Score: " + this.board.snake.score);
+	};
+	
 	View.prototype.setupGrid = function () {
 	  var html = "";
 	
@@ -116,6 +122,7 @@
 	  if (this.board.snake.segments.length > 0) {
 	    this.board.snake.move();
 	    this.render();
+	    this.updateScore(this.board.snake.score);
 	  } else {
 	    alert("You lose!");
 	    window.clearInterval(this.interval);
@@ -175,6 +182,7 @@
 	  this.segments = [center];
 	
 	  this.growTurns = 0;
+	  this.score = 0;
 	};
 	
 	Snake.DIFFERENCE = {

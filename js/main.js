@@ -1,6 +1,7 @@
 var SnakeView = require('./snake-view');
 
 $(function () {
-  var rootEl = $('.snake-game');
-  new SnakeView(rootEl);
+  var el = $('.snake-game');
+  var rootEl = $('.root');
+  new SnakeView(el, rootEl);
 });
