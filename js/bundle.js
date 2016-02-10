@@ -194,10 +194,12 @@
 	
 	Snake.SYMBOL = "S";
 	Snake.GROW_TURNS = 3;
+	Snake.APPLE_POINTS = 10;
 	
 	Snake.prototype.eatApple = function () {
 	  if (this.head().equals(this.board.apple.position)) {
 	    this.growTurns += Snake.GROW_TURNS;
+	    this.score += Snake.APPLE_POINTS;
 	    return true;
 	  } else {
 	    return false;
