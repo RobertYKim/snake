@@ -6,7 +6,7 @@ var View = function ($el) {
   this.board = new Board(20);
   this.setupGrid();
 
-  this.interval = window.setInterval(this.step.bind(this), 500);
+  this.interval = window.setInterval(this.step.bind(this), 100);
 
   $(window).on("keydown", this.handleKeyEvent.bind(this));
 };
@@ -55,8 +55,13 @@ View.prototype.setupGrid = function () {
 };
 
 View.prototype.step = function () {
-  this.board.snake.move();
-  this.render();
+  if (this.board.snake.segments.length > 0) {
+    this.board.snake.move();
+    this.render();
+  } else {
+    alert("You lose!");
+    window.clearInterval(this.interval);
+  }
 };
 
 module.exports = View;

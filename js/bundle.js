@@ -64,7 +64,7 @@
 	  this.board = new Board(20);
 	  this.setupGrid();
 	
-	  this.interval = window.setInterval(this.step.bind(this), 500);
+	  this.interval = window.setInterval(this.step.bind(this), 100);
 	
 	  $(window).on("keydown", this.handleKeyEvent.bind(this));
 	};
@@ -113,8 +113,13 @@
 	};
 	
 	View.prototype.step = function () {
-	  this.board.snake.move();
-	  this.render();
+	  if (this.board.snake.segments.length > 0) {
+	    this.board.snake.move();
+	    this.render();
+	  } else {
+	    alert("You lose!");
+	    window.clearInterval(this.interval);
+	  }
 	};
 	
 	module.exports = View;
@@ -184,7 +189,7 @@
 	
 	Snake.prototype.eatApple = function () {
 	  if (this.head().equals(this.board.apple.position)) {
-	    this.growTurns += 3;
+	    this.growTurns += Snake.GROW_TURNS;
 	    return true;
 	  } else {
 	    return false;
@@ -207,6 +212,22 @@
 	  return this.segments[last];
 	};
 	
+	Snake.prototype.isValid = function () {
+	  var head = this.head();
+	
+	  if (!this.board.validPosition(this.head())) {
+	    return false;
+	  }
+	
+	  for (var i = 0; i < this.segments.length - 1; i++) {
+	    if (this.segments[i].equals(head)) {
+	      return false;
+	    }
+	  }
+	
+	  return true;
+	};
+	
 	Snake.prototype.move = function () {
 	  // Move snake forward by adding a new segment in the direction the snake
 	  // is traveling in.
@@ -226,6 +247,11 @@
 	    this.growTurns -= 1;
 	  } else {
 	    this.segments.shift();
+	  }
+	
+	  // Destroy snake if collides with wall or self
+	  if (!this.isValid()) {
+	    this.segments = [];
 	  }
 	};
 	
@@ -277,6 +303,15 @@
 	  grid.map( function (row) {
 	    return row.join("");
 	  }).join("\n");
+	};
+	
+	Board.prototype.validPosition = function (coordinate) {
+	  return (
+	    (coordinate.a >= 0) &&
+	    (coordinate.a < this.size) &&
+	    (coordinate.b >= 0) &&
+	    (coordinate.b < this.size)
+	  );
 	};
 	
 	module.exports = Board;

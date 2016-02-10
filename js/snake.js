@@ -58,7 +58,7 @@ Snake.GROW_TURNS = 3;
 
 Snake.prototype.eatApple = function () {
   if (this.head().equals(this.board.apple.position)) {
-    this.growTurns += 3;
+    this.growTurns += Snake.GROW_TURNS;
     return true;
   } else {
     return false;
@@ -81,6 +81,22 @@ Snake.prototype.head = function () {
   return this.segments[last];
 };
 
+Snake.prototype.isValid = function () {
+  var head = this.head();
+
+  if (!this.board.validPosition(this.head())) {
+    return false;
+  }
+
+  for (var i = 0; i < this.segments.length - 1; i++) {
+    if (this.segments[i].equals(head)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 Snake.prototype.move = function () {
   // Move snake forward by adding a new segment in the direction the snake
   // is traveling in.
@@ -100,6 +116,11 @@ Snake.prototype.move = function () {
     this.growTurns -= 1;
   } else {
     this.segments.shift();
+  }
+
+  // Destroy snake if collides with wall or self
+  if (!this.isValid()) {
+    this.segments = [];
   }
 };
 
@@ -151,6 +172,15 @@ Board.prototype.render = function () {
   grid.map( function (row) {
     return row.join("");
   }).join("\n");
+};
+
+Board.prototype.validPosition = function (coordinate) {
+  return (
+    (coordinate.a >= 0) &&
+    (coordinate.a < this.size) &&
+    (coordinate.b >= 0) &&
+    (coordinate.b < this.size)
+  );
 };
 
 module.exports = Board;
