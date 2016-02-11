@@ -363,19 +363,23 @@
 	
 	Snake.prototype.dueEast = function () {
 	  var board = this.board;
-	  var currentDirection = board.computer.direction;
+	  var currentDirection = board.computer.direction.slice();
 	  var appleY = board.apple.position.a;
 	  var headY = board.computer.head().a;
-	  if (currentDirection === "W") {
+	  if (currentDirection === "W")  {
 	    this.direction = (headY > appleY ? "S" : "N");
 	  } else {
 	    this.direction = "E";
+	  }
+	
+	  if (this.pathBlocked()) {
+	    this.direction = this.alternatePath(currentDirection);
 	  }
 	};
 	
 	Snake.prototype.dueNorthOrSouth = function () {
 	  var board = this.board;
-	  var currentDirection = board.computer.direction;
+	  var currentDirection = board.computer.direction.slice();
 	  var appleY = board.apple.position.a;
 	  var headY = board.computer.head().a;
 	  if (headY > appleY && currentDirection !== "S") {
@@ -385,17 +389,83 @@
 	  } else {
 	    this.direction = "E";
 	  }
+	
+	  if (this.pathBlocked()) {
+	    this.direction = this.alternatePath(currentDirection);
+	  }
 	};
 	
 	Snake.prototype.dueWest = function () {
 	  var board = this.board;
-	  var currentDirection = board.computer.direction;
+	  var currentDirection = board.computer.direction.slice();
 	  var appleY = board.apple.position.a;
 	  var headY = board.computer.head().a;
 	  if (currentDirection === "E") {
 	    this.direction = (headY > appleY ? "S" : "N");
 	  } else {
 	    this.direction = "W";
+	  }
+	
+	  if (this.pathBlocked()) {
+	    this.direction = this.alternatePath(currentDirection);
+	  }
+	};
+	
+	Snake.prototype.pathBlocked = function () {
+	  var spaceAhead = this.head().plus(Snake.DIFFERENCE[this.direction]);
+	  var enemySegments = this.board.snake.segments;
+	
+	  if (!this.board.validPosition(spaceAhead)) {
+	    return true;
+	  }
+	
+	  for (var i = 0; i < this.segments.length - 1; i++) {
+	    if (this.segments[i].equals(spaceAhead)) {
+	      return true;
+	    }
+	  }
+	
+	  for (var j = 0; j < enemySegments.length; j++) {
+	    if (enemySegments[j].equals(spaceAhead)) {
+	      return true;
+	    }
+	  }
+	
+	  return false;
+	};
+	
+	Snake.prototype.alternatePath = function (currentDirection) {
+	  // Remove ivalid directions from all possible directions
+	  var alternatives = ["N", "S", "E", "W"];
+	  var oppositeDirectionIndex = alternatives.findIndex( function (element) {
+	    return element === this.oppositeDirection(currentDirection);
+	  }.bind(this));
+	  alternatives.splice(oppositeDirectionIndex, 1);
+	  var invalidDirectionIndex = alternatives.findIndex( function (element) {
+	    return element === this.direction;
+	  }.bind(this));
+	  alternatives.splice(invalidDirectionIndex, 1);
+	  // return the first direction whose path is not blocked
+	  for (var i = 0; i < alternatives.length; i++) {
+	    this.direction = alternatives[i];
+	    if (!this.pathBlocked()) {
+	      return alternatives[i];
+	    }
+	  }
+	
+	  return currentDirection;
+	};
+	
+	Snake.prototype.oppositeDirection = function (direction) {
+	  switch (direction) {
+	    case "N":
+	      return "S";
+	    case "S":
+	      return "N";
+	    case "E":
+	      return "W";
+	    case "W":
+	      return "E";
 	  }
 	};
 	
