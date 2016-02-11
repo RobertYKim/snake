@@ -331,10 +331,9 @@
 	Snake.prototype.pickDirection = function () {
 	  var board = this.board;
 	  var appleX = board.apple.position.b;
-	  var appleY = board.apple.position.a;
 	  var headX = board.computer.head().b;
-	  var headY = board.computer.head().a;
 	  var currentDirection = board.computer.direction;
+	
 	
 	  // Compare apple X position with snake head X position
 	  var xComparison;
@@ -351,28 +350,52 @@
 	  // in which snake should move towards Y-Coordinate of apple.
 	  switch (xComparison) {
 	    case -1:
-	    if (currentDirection === "W") {
-	      this.direction = (headY > appleY ? "S" : "N");
-	    } else {
-	      this.direction = "E";
-	    }
+	      this.dueEast();
 	    break;
 	    case 0:
-	    if (headY > appleY && currentDirection !== "S") {
-	      this.direction = "N";
-	    } else if (headY < appleY && currentDirection !== "N") {
-	      this.direction = "S";
-	    } else {
-	      this.direction = "E";
-	    }
+	      this.dueNorthOrSouth();
 	    break;
 	    case 1:
-	    if (currentDirection === "E") {
-	      this.direction = (headY > appleY ? "S" : "N");
-	    } else {
-	      this.direction = "W";
-	    }
+	      this.dueWest();
 	    break;
+	  }
+	};
+	
+	Snake.prototype.dueEast = function () {
+	  var board = this.board;
+	  var currentDirection = board.computer.direction;
+	  var appleY = board.apple.position.a;
+	  var headY = board.computer.head().a;
+	  if (currentDirection === "W") {
+	    this.direction = (headY > appleY ? "S" : "N");
+	  } else {
+	    this.direction = "E";
+	  }
+	};
+	
+	Snake.prototype.dueNorthOrSouth = function () {
+	  var board = this.board;
+	  var currentDirection = board.computer.direction;
+	  var appleY = board.apple.position.a;
+	  var headY = board.computer.head().a;
+	  if (headY > appleY && currentDirection !== "S") {
+	    this.direction = "N";
+	  } else if (headY < appleY && currentDirection !== "N") {
+	    this.direction = "S";
+	  } else {
+	    this.direction = "E";
+	  }
+	};
+	
+	Snake.prototype.dueWest = function () {
+	  var board = this.board;
+	  var currentDirection = board.computer.direction;
+	  var appleY = board.apple.position.a;
+	  var headY = board.computer.head().a;
+	  if (currentDirection === "E") {
+	    this.direction = (headY > appleY ? "S" : "N");
+	  } else {
+	    this.direction = "W";
 	  }
 	};
 	
