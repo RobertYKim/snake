@@ -435,16 +435,21 @@
 	};
 	
 	Snake.prototype.alternatePath = function (currentDirection) {
-	  // Remove ivalid directions from all possible directions
 	  var alternatives = ["N", "S", "E", "W"];
+	
+	  // Remove ivalid directions from all possible directions
+	  // Cannot turn around 180 degrees so remove that option
 	  var oppositeDirectionIndex = alternatives.findIndex( function (element) {
 	    return element === this.oppositeDirection(currentDirection);
 	  }.bind(this));
 	  alternatives.splice(oppositeDirectionIndex, 1);
+	
+	  // Direction that snake was traveling in is not valid so remove that option
 	  var invalidDirectionIndex = alternatives.findIndex( function (element) {
 	    return element === this.direction;
 	  }.bind(this));
 	  alternatives.splice(invalidDirectionIndex, 1);
+	
 	  // return the first direction whose path is not blocked
 	  for (var i = 0; i < alternatives.length; i++) {
 	    this.direction = alternatives[i];
@@ -453,6 +458,7 @@
 	    }
 	  }
 	
+	  // If no options available, continue down doomed path
 	  return currentDirection;
 	};
 	
