@@ -220,7 +220,7 @@
 	  }
 	  this.segments = [center];
 	
-	  this.growTurns = 0;
+	  this.growTurns = 3;
 	  this.score = 0;
 	};
 	
