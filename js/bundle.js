@@ -83,7 +83,7 @@
 	
 	View.prototype.handleKeyEvent = function (event) {
 	  var input = View.KEYS[event.keyCode];
-	  if (input !== "P") {
+	  if (input === "N" || input === "E" || input === "S" || input === "W") {
 	    this.board.snake.turn(input);
 	  } else if (input === "P") {
 	    this.pause();
@@ -105,6 +105,7 @@
 	
 	View.prototype.render = function () {
 	  this.updateClasses(this.board.snake.segments, "snake");
+	  this.updateClasses(this.board.computer.segments, "computer");
 	  this.updateClasses([this.board.apple.position], "apple");
 	};
 	
@@ -137,11 +138,19 @@
 	};
 	
 	View.prototype.step = function () {
-	  if (this.board.snake.segments.length > 0) {
+	  if (
+	    this.board.snake.segments.length > 0 &&
+	    this.board.computer.segments.length > 0
+	  ) {
 	    this.board.snake.move();
+	    this.board.computer.pickDirection();
+	    this.board.computer.move();
 	    this.render();
 	    this.updateScore(this.board.snake.score);
-	  } else {
+	  } else if (this.board.computer.segments.length === 0) {
+	    alert("You win!");
+	    window.clearInterval(this.interval);
+	  } else if (this.board.snake.segments.length === 0) {
 	    alert("You lose!");
 	    window.clearInterval(this.interval);
 	  }
@@ -182,7 +191,10 @@
 	  var x = Math.floor(Math.random() * this.board.size);
 	  var y = Math.floor(Math.random() * this.board.size);
 	
-	  while (this.board.snake.isOccupying([x, y])) {
+	  while (
+	    this.board.snake.isOccupying([x, y]) ||
+	    this.board.computer.isOccupying([x, y])
+	  ) {
 	    x = Math.floor(Math.random() * this.board.size);
 	    y = Math.floor(Math.random() * this.board.size);
 	  }
@@ -190,13 +202,22 @@
 	  this.position = new Coordinate(x, y);
 	};
 	
-	var Snake = function (board) {
+	var Snake = function (board, type) {
 	  this.direction = "N";
 	  this.turning = false;
 	  this.board = board;
+	  this.type = type;
 	
-	  var center =
-	    new Coordinate(Math.floor(board.size/2), Math.floor(board.size/2));
+	  var center;
+	  if (this.type === "human") {
+	    center = new Coordinate(
+	      Math.floor(board.size * (3/4)), Math.floor(board.size * (1/4))
+	    );
+	  } else {
+	    center = new Coordinate(
+	      Math.floor(board.size * (3/4)), Math.floor(board.size * (3/4))
+	    );
+	  }
 	  this.segments = [center];
 	
 	  this.growTurns = 0;
@@ -240,7 +261,7 @@
 	  return this.segments[last];
 	};
 	
-	Snake.prototype.isValid = function () {
+	Snake.prototype.isValid = function (enemySegments) {
 	  var head = this.head();
 	
 	  if (!this.board.validPosition(this.head())) {
@@ -249,6 +270,12 @@
 	
 	  for (var i = 0; i < this.segments.length - 1; i++) {
 	    if (this.segments[i].equals(head)) {
+	      return false;
+	    }
+	  }
+	
+	  for (var j = 0; j < enemySegments.length; j++) {
+	    if (enemySegments[j].equals(head)) {
 	      return false;
 	    }
 	  }
@@ -278,7 +305,13 @@
 	  }
 	
 	  // Destroy snake if collides with wall or self
-	  if (!this.isValid()) {
+	  var enemySegments;
+	  if (this.type === "human") {
+	    enemySegments = this.board.computer.segments;
+	  } else {
+	    enemySegments = this.board.snake.segments;
+	  }
+	  if (!this.isValid(enemySegments)) {
 	    this.segments = [];
 	  }
 	};
@@ -295,10 +328,59 @@
 	  }
 	};
 	
+	Snake.prototype.pickDirection = function () {
+	  var board = this.board;
+	  var appleX = board.apple.position.b;
+	  var appleY = board.apple.position.a;
+	  var headX = board.computer.head().b;
+	  var headY = board.computer.head().a;
+	  var currentDirection = board.computer.direction;
+	
+	  // Compare apple X position with snake head X position
+	  var xComparison;
+	  if (headX < appleX) {
+	    xComparison = -1;
+	  } else if (headX === appleX) {
+	    xComparison = 0;
+	  } else if (headX > appleX) {
+	    xComparison = 1;
+	  }
+	
+	  // Decision making logic for computer snake: Move towards X-Coordinate of
+	  // apple, unless that direction is opposite current direction,
+	  // in which snake should move towards Y-Coordinate of apple.
+	  switch (xComparison) {
+	    case -1:
+	    if (currentDirection === "W") {
+	      this.direction = (headY > appleY ? "S" : "N");
+	    } else {
+	      this.direction = "E";
+	    }
+	    break;
+	    case 0:
+	    if (headY > appleY && currentDirection !== "S") {
+	      this.direction = "N";
+	    } else if (headY < appleY && currentDirection !== "N") {
+	      this.direction = "S";
+	    } else {
+	      this.direction = "E";
+	    }
+	    break;
+	    case 1:
+	    if (currentDirection === "E") {
+	      this.direction = (headY > appleY ? "S" : "N");
+	    } else {
+	      this.direction = "W";
+	    }
+	    break;
+	  }
+	};
+	
 	var Board = function (size) {
 	  this.size = size;
 	
-	  this.snake = new Snake(this);
+	  this.snake = new Snake(this, "human");
+	  this.computer = new Snake(this, "computer");
 	  this.apple = new Apple(this);
 	};
 	

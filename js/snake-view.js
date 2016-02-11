@@ -24,7 +24,7 @@ View.KEYS = {
 
 View.prototype.handleKeyEvent = function (event) {
   var input = View.KEYS[event.keyCode];
-  if (input !== "P") {
+  if (input === "N" || input === "E" || input === "S" || input === "W") {
     this.board.snake.turn(input);
   } else if (input === "P") {
     this.pause();
@@ -46,6 +46,7 @@ View.prototype.pause = function () {
 
 View.prototype.render = function () {
   this.updateClasses(this.board.snake.segments, "snake");
+  this.updateClasses(this.board.computer.segments, "computer");
   this.updateClasses([this.board.apple.position], "apple");
 };
 
@@ -78,11 +79,19 @@ View.prototype.setupGrid = function () {
 };
 
 View.prototype.step = function () {
-  if (this.board.snake.segments.length > 0) {
+  if (
+    this.board.snake.segments.length > 0 &&
+    this.board.computer.segments.length > 0
+  ) {
     this.board.snake.move();
+    this.board.computer.pickDirection();
+    this.board.computer.move();
     this.render();
     this.updateScore(this.board.snake.score);
-  } else {
+  } else if (this.board.computer.segments.length === 0) {
+    alert("You win!");
+    window.clearInterval(this.interval);
+  } else if (this.board.snake.segments.length === 0) {
     alert("You lose!");
     window.clearInterval(this.interval);
   }
