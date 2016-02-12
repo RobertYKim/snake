@@ -50,6 +50,44 @@ li {
   height: 20px;
 }
 
+.group:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.root {
+  width: 80%;
+  margin: auto;
+  position: relative;
+}
+
+.game {
+  position: absolute;
+  width: 480px;
+  margin: auto;
+}
+
+.score {
+  margin-bottom: 20px;
+}
+
+.top-spacer {
+  width: 500px;
+  height: 300px;
+}
+
+.left-spacer {
+  width: 500px;
+  height: 350px;
+  float: left;
+}
+
+.footer {
+  float: left;
+  position: relative;
+}
+
 .apple {
   background: red;
 }
@@ -74,18 +112,16 @@ li {
   display: none;
   position: absolute;
   width: 130px;
-  left: 50%;
+  left: 175px;
   top: 500px;
-  transform: translate(-50%, 0);
 }
 
 .won, .lost {
   display: none;
   position: absolute;
   width: 130px;
-  left: 50%;
+  left: 175px;
   top: 300px;
-  transform: translate(-50%, 0);
 }
 
 .show, .gameover {
@@ -97,7 +133,6 @@ li {
 }
 
 .links {
-  padding: 20px;
   width: 480px;
   margin: auto;
 }
