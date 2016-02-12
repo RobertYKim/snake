@@ -1,4 +1,4 @@
-html, body, figure, figcaption, ul, li, h1 {
+html, body, figure, figcaption, ul, li, h1, h2, h3 {
   margin: 0;
   padding: 0;
   border: 0;
@@ -18,7 +18,16 @@ body {
 
 h1 {
   font-size: 60px;
-  margin: 30px;
+  margin-top: 30px;
+}
+
+h2 {
+  margin: 10px;
+  font-size: 20px;
+}
+
+h3 {
+  margin-top: 10px;
 }
 
 figure {
@@ -46,11 +55,19 @@ li {
 }
 
 .snake {
+  background: lightgreen;
+}
+
+.snake-head {
   background: green;
 }
 
 .computer {
-  background: blue;
+  background: lightgray;
+}
+
+.computer-head {
+  background: gray;
 }
 
 .paused {
@@ -58,10 +75,45 @@ li {
   position: absolute;
   width: 130px;
   left: 50%;
-  top: 50%;
+  top: 500px;
+  transform: translate(-50%, 0);
+}
+
+.won, .lost {
+  display: none;
+  position: absolute;
+  width: 130px;
+  left: 50%;
+  top: 300px;
   transform: translate(-50%, 0);
 }
 
 .show {
   display: block;;
+}
+
+.footer {
+  padding-top: 10px;
+}
+
+.links {
+  padding: 20px;
+  width: 480px;
+  margin: auto;
+}
+
+.links > div {
+  float: left;
+}
+
+.links > div > div {
+  box-sizing: border-box;
+  height: 100px;
+  width: 100px;
+  margin: 0 30px;
+  overflow: hidden;
+}
+
+.links > div > div img {
+  height: 100%;
 }

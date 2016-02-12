@@ -104,8 +104,12 @@
 	};
 	
 	View.prototype.render = function () {
-	  this.updateClasses(this.board.snake.segments, "snake");
-	  this.updateClasses(this.board.computer.segments, "computer");
+	  var snake = this.board.snake.segments;
+	  var computer = this.board.computer.segments;
+	  this.updateClasses(snake, "snake");
+	  this.updateClasses([snake[snake.length - 1]], "snake-head");
+	  this.updateClasses(computer, "computer");
+	  this.updateClasses([computer[computer.length - 1]], "computer-head");
 	  this.updateClasses([this.board.apple.position], "apple");
 	};
 	
