@@ -1,6 +1,6 @@
 # A.I. Snake
 
-[Live]
+[Live](http://robertykim.github.io/snake/)
 
 ##Summary
 This is a two player snake game with one human player and one computer player.
