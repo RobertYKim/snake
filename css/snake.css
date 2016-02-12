@@ -88,8 +88,8 @@ li {
   transform: translate(-50%, 0);
 }
 
-.show {
-  display: block;;
+.show, .gameover {
+  display: block;
 }
 
 .footer {

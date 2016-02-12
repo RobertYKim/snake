@@ -6,7 +6,7 @@ var View = function ($el, $rootEl) {
 
   this.board = new Board(20);
   this.setupGrid();
-
+  this.gameOngoing = true;
   this.paused = false;
   this.interval = window.setInterval(this.step.bind(this), 100);
   this.pause();
@@ -15,6 +15,7 @@ var View = function ($el, $rootEl) {
 };
 
 View.KEYS = {
+  13: "R",
   32: "P",
   38: "N",
   39: "E",
@@ -26,9 +27,23 @@ View.prototype.handleKeyEvent = function (event) {
   var input = View.KEYS[event.keyCode];
   if (input === "N" || input === "E" || input === "S" || input === "W") {
     this.board.snake.turn(input);
-  } else if (input === "P") {
+  } else if (input === "P" && this.gameOngoing) {
+    this.pause();
+  } else if (input === "R" && !this.gameOngoing) {
+    this.reset();
+  }
+};
+
+View.prototype.reset = function () {
+  if (this.interval) {
+    window.clearInterval(this.interval);
     this.pause();
   }
+  $(".won").removeClass("gameover");
+  $(".lost").removeClass("gameover");
+  this.board = new Board(20);
+  this.setupGrid();
+  this.gameOngoing = true;
 };
 
 View.prototype.pause = function () {
@@ -90,14 +105,21 @@ View.prototype.step = function () {
     this.board.snake.move();
     this.board.computer.pickDirection();
     this.board.computer.move();
-    this.render();
-    this.updateScore(this.board.snake.score);
+    if (
+      this.board.snake.segments.length > 0 &&
+      this.board.computer.segments.length > 0
+    ) {
+      this.render();
+      this.updateScore(this.board.snake.score);
+    }
   } else if (this.board.computer.segments.length === 0) {
-    alert("You win!");
+    $(".won").toggleClass("gameover");
     window.clearInterval(this.interval);
+    this.gameOngoing = false;
   } else if (this.board.snake.segments.length === 0) {
-    alert("You lose!");
+    $(".lost").toggleClass("gameover");
     window.clearInterval(this.interval);
+    this.gameOngoing = false;
   }
 };
 
