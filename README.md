@@ -2,6 +2,9 @@
 
 [Live](http://robertykim.github.io/snake/)
 
+##Screenshot
+![Game Screenshot](/assets/snake.png?raw=true "Game Screenshot")
+
 ##Summary
 This is a two player snake game with one human player and one computer player.
 The goal is to collect the most points possible by eating red apples, while
